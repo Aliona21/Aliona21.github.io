@@ -274,3 +274,7 @@ ol li::before {
   padding: 25px 0;
   text-transform: uppercase;
 }
+
+label{
+  color: lightgray;
+}
