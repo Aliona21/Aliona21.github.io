@@ -976,36 +976,50 @@
               <h3>Get In Touch</h3>
               <p>Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Vestibulum ante ipsum primis.</p>
 
-              <form action="forms/contact.php" method="post" class="php-email-form">
+              <form id="feedbackForm">
                 <div class="row gy-4">
 
                   <div class="col-md-6">
-                    <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
+                    <input type="text" id="fname" name="fname" class="form-control" placeholder="Vardas" required="">
+                  </div>
+
+                  <div class="col-md-6">
+                    <input type="text" id="lname" name="lname" class="form-control" placeholder="Pavardė" required="">
                   </div>
 
                   <div class="col-md-6 ">
-                    <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
+                    <input type="email" id="email" class="form-control" name="email" placeholder="El. paštas" required="">
+                  </div>
+
+                  <div class="col-md-6 ">
+                    <input type="tel" id="phone" class="form-control" name="phone" placeholder="Tel. numeris" required="">
                   </div>
 
                   <div class="col-12">
-                    <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
+                    <input type="text" id="address" class="form-control" name="address" placeholder="Adresas" required="">
                   </div>
 
-                  <div class="col-12">
-                    <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
+                  <div>
+                    <label for="q1">1. Pirmas vertinimo klausimas?</label><br>
+                    <input type="range" id="q1" name="q1" min="1" max="10" value="5" oninput="q1_value.value = this.value">
+                    <output id="q1_value">5</output><br><br>
+
+                    <label for="q2">2. Antras vertinimo klausimas?</label><br>
+                    <input type="range" id="q2" name="q2" min="1" max="10" value="5" oninput="q2_value.value = this.value">
+                    <output id="q2_value">5</output><br><br>
+
+                    <label for="q3">3. Trečias vertinimo klausimas?</label><br>
+                    <input type="range" id="q3" name="q3" min="1" max="10" value="5" oninput="q3_value.value = this.value">
+                    <output id="q3_value">5</output><br>
                   </div>
 
-                  <div class="col-12 text-center">
-                    <div class="loading">Loading</div>
-                    <div class="error-message"></div>
-                    <div class="sent-message">Your message has been sent. Thank you!</div>
-
-                    <button type="submit" class="btn">Send Message</button>
+                    <button type="submit" class="btn">Submit</button>
                   </div>
-
+                  <div id="popup" class="popup">Duomenys pateikti sėkmingai!</div>
                 </div>
               </form>
-
+              <h2>Įvesti duomenys:</h2>
+              <div id="result"></div>
             </div>
           </div>
 
@@ -1055,6 +1069,7 @@
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
   <script src="assets/js/custom.js"></script>
+
 </body>
 
 </html>
