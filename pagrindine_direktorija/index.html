@@ -1001,25 +1001,26 @@
 
                   <div>
                     <label for="q1">1. Pirmas vertinimo klausimas?</label><br>
-                    <input type="range" id="q1" name="q1" min="1" max="10" value="5" oninput="q1_value.value = this.value">
+                    <input type="range" id="q1" min="1" max="10" value="5">
                     <output id="q1_value">5</output><br><br>
 
                     <label for="q2">2. Antras vertinimo klausimas?</label><br>
-                    <input type="range" id="q2" name="q2" min="1" max="10" value="5" oninput="q2_value.value = this.value">
+                    <input type="range" id="q2" min="1" max="10" value="5">
                     <output id="q2_value">5</output><br><br>
 
                     <label for="q3">3. Trečias vertinimo klausimas?</label><br>
-                    <input type="range" id="q3" name="q3" min="1" max="10" value="5" oninput="q3_value.value = this.value">
-                    <output id="q3_value">5</output><br>
-                  </div>
-
+                    <input type="range" id="q3" min="1" max="10" value="5">
+                    <output id="q3_value">5</output>
+                  
                     <button type="submit" class="btn">Submit</button>
                   </div>
-                  <div id="popup" class="popup">Duomenys pateikti sėkmingai!</div>
                 </div>
               </form>
-              <h2>Įvesti duomenys:</h2>
-              <div id="result"></div>
+              <div id="popup" class="popup">Duomenys pateikti sėkmingai!</div>
+              <div id="resultsSection" style="display:none;">
+                <h2>Įvesti duomenys:</h2>
+                <div id="result"></div>
+              </div>
             </div>
           </div>
 
