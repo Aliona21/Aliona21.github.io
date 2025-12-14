@@ -232,4 +232,270 @@ document.addEventListener("DOMContentLoaded", function () {
 
         form.style.display = 'none';
     });
+
+    // ŽAIDIMAS
+    const uniqueCardIcons = [
+        'bi-star-fill',
+        'bi-heart-fill',
+        'bi-lightning-fill',
+        'bi-bell-fill',
+        'bi-cloud-fill',
+        'bi-cpu-fill',
+        'bi-gem',
+        'bi-trophy-fill',
+        'bi-house-fill',
+        'bi-car-front-fill',
+        'bi-bug-fill',
+        'bi-puzzle-fill'
+    ];
+
+    let gameData = [];
+    let difficulty = 'easy'; 
+    let gameActive = false;
+    let hasFlippedCard = false;
+    let lockBoard = false;
+    let firstCard = null;
+    let secondCard = null;
+    let moves = 0;
+    let matchedPairsCount = 0;
+    let bestScores = {
+        easy: null,
+        hard: null
+    };
+    let seconds = 0;
+    let timerInterval = null;
+
+    const gameBoard = document.getElementById('gameBoard');
+    const difficultySelect = document.getElementById('difficulty');
+    const startGameBtn = document.getElementById('startGameBtn');
+    const resetGameBtn = document.getElementById('resetGameBtn');
+    const movesCountElement = document.getElementById('movesCount');
+    const matchedPairsElement = document.getElementById('matchedPairs');
+    const totalPairsElement = document.getElementById('totalPairs');
+    const winMessageElement = document.getElementById('winMessage');
+    const bestScoreDisplayElement = document.getElementById('bestScoreDisplay');
+    const gameTimerElement = document.getElementById('gameTimer');
+
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function handleCardClick(e) {
+        if (!gameActive) return;
+        const clickedCardElement = e.currentTarget;
+        
+        if (lockBoard) return;
+        if (clickedCardElement === firstCard) return;
+        if (clickedCardElement.classList.contains('matched')) return;
+
+        clickedCardElement.classList.add('flipped');
+
+        if (!hasFlippedCard) {
+            hasFlippedCard = true;
+            firstCard = clickedCardElement;
+            return;
+        }
+
+        secondCard = clickedCardElement;
+        
+        moves++;
+        movesCountElement.textContent = moves;
+
+        checkForMatch();
+    }
+
+    function checkForMatch() {
+        const isMatch = firstCard.dataset.icon === secondCard.dataset.icon;
+
+        isMatch ? disableCards() : unflipCards();
+    }
+
+    function disableCards() {
+        firstCard.classList.add('matched');
+        secondCard.classList.add('matched');
+        
+        firstCard.removeEventListener('click', handleCardClick);
+        secondCard.removeEventListener('click', handleCardClick);
+        
+        matchedPairsCount++;
+        matchedPairsElement.textContent = matchedPairsCount;
+        
+        resetBoard();
+        
+        checkWinCondition();
+    }
+
+    function unflipCards() {
+        lockBoard = true;
+        
+        setTimeout(() => {
+            firstCard.classList.remove('flipped');
+            secondCard.classList.remove('flipped');
+            
+            resetBoard();
+        }, 1000);
+    }
+    
+    function resetBoard() {
+        [hasFlippedCard, lockBoard] = [false, false];
+        [firstCard, secondCard] = [null, null];
+    }
+    
+    function checkWinCondition() {
+        const totalCards = gameData.length;
+        const totalMatchesNeeded = totalCards / 2;
+        
+        if (matchedPairsCount === totalMatchesNeeded) {
+            stopTimer();
+            updateBestScore();
+            winMessageElement.textContent = `Laimėjote! Žaidimas baigtas per ${moves} ėjimus!`;
+            winMessageElement.style.display = 'block';
+            resetGameBtn.disabled = false;
+            startGameBtn.disabled = false;
+            
+            gameActive = false;
+        }
+    }
+
+    function generateGameBoard(difficultyLevel) {
+        let numUniqueCards;
+        let numColumns;
+        
+        if (difficultyLevel === 'hard') {
+            numUniqueCards = 12; 
+            numColumns = 6;
+        } else {
+            numUniqueCards = 6;
+            numColumns = 4;
+        }
+        
+        gameBoard.style.gridTemplateColumns = `repeat(${numColumns}, 1fr)`;
+        
+        const selectedIcons = uniqueCardIcons.slice(0, numUniqueCards);
+        const cardsToUse = [...selectedIcons, ...selectedIcons];
+
+        gameData = shuffleArray(cardsToUse.map((icon, index) => ({
+            id: index,
+            icon: icon,
+            isFlipped: false,
+            isMatched: false
+        })));
+        
+        totalPairsElement.textContent = numUniqueCards;
+        
+        if (timerInterval) stopTimer();
+        gameTimerElement.textContent = '0:00';
+        moves = 0;
+        matchedPairsCount = 0;
+        movesCountElement.textContent = moves;
+        matchedPairsElement.textContent = matchedPairsCount;
+        winMessageElement.style.display = 'none';
+        gameActive = false;
+        
+        displayBestScore();
+
+        renderCards();
+    }
+
+
+    function renderCards() {
+        gameBoard.innerHTML = '';
+        gameData.forEach(card => {
+            const cardElement = document.createElement('div');
+            cardElement.classList.add('card');
+            cardElement.dataset.icon = card.icon;
+            cardElement.dataset.id = card.id;
+            
+            const cardFront = document.createElement('div');
+            cardFront.classList.add('card-face', 'card-front');
+            cardFront.innerHTML = `<i class="bi ${card.icon}"></i>`;
+            
+            const cardBack = document.createElement('div');
+            cardBack.classList.add('card-face', 'card-back');
+            cardBack.innerHTML = '<i class="bi bi-question-lg"></i>';
+            
+            cardElement.appendChild(cardFront);
+            cardElement.appendChild(cardBack);
+            
+            cardElement.addEventListener('click', handleCardClick);
+
+            gameBoard.appendChild(cardElement);
+        });
+    }
+
+    function startTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+        
+        seconds = 0;
+        gameTimerElement.textContent = '0:00';
+        
+        timerInterval = setInterval(() => {
+            seconds++;
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            const timeString = `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+            gameTimerElement.textContent = timeString;
+        }, 1000);
+    }
+    
+    function stopTimer() {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+
+    function getBestScores() {
+        const scores = localStorage.getItem('memoryGameBestScores');
+        if (scores) {
+            bestScores = JSON.parse(scores);
+        }
+        displayBestScore();
+    }
+
+    function displayBestScore() {
+        const currentBest = bestScores[difficulty];
+        if (currentBest !== null) {
+            bestScoreDisplayElement.textContent = `Geriausias rezultatas: ${currentBest} ėjimai`;
+        } else {
+            bestScoreDisplayElement.textContent = `Geriausias rezultatas: N/A`;
+        }
+    }
+    
+    function updateBestScore() {
+        const currentBest = bestScores[difficulty];
+        
+        if (currentBest === null || moves < currentBest) {
+            bestScores[difficulty] = moves;
+            localStorage.setItem('memoryGameBestScores', JSON.stringify(bestScores));
+            displayBestScore();
+        }
+    }
+
+    difficultySelect.addEventListener('change', (e) => {
+        difficulty = e.target.value;
+        generateGameBoard(difficulty); 
+    });
+
+    startGameBtn.addEventListener('click', () => {
+        generateGameBoard(difficulty);
+        startTimer();
+        gameActive = true;
+        resetGameBtn.disabled = false;
+        startGameBtn.disabled = true; 
+    });
+
+    resetGameBtn.addEventListener('click', () => {
+        generateGameBoard(difficulty);
+        resetGameBtn.disabled = true;
+        startGameBtn.disabled = false; 
+    });
+
+    getBestScores();
+    
+    generateGameBoard(difficulty);
 });
+
