@@ -1044,6 +1044,44 @@
 
     </section><!-- /Contact Section -->
 
+    <section id="memory-game" class="memory-game section">
+      <div class="container section-title" data-aos="fade-up">
+          <h2>Mano Žaidimas</h2>
+      </div>
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+          <div class="difficulty-selection">
+              <label for="difficulty">Pasirinkite sudėtingumo lygį:</label>
+              <select id="difficulty">
+                  <option value="easy">Lengvas (4x3)</option>
+                  <option value="hard">Sunkus (6x4)</option>
+              </select>
+              <button id="startGameBtn" class="btn btn-primary">Start</button> <button id="resetGameBtn" class="btn btn-secondary" disabled>Atnaujinti</button> </div>
+
+          <div class="game-area row mt-4">
+              
+              <div class="col-md-3">
+                  <div class="stats-block p-3 border rounded">
+                      <h4>Statistika</h4>
+                      <p>Laikas: <span id="gameTimer">0:00</span></p>
+                      <p>Ėjimų skaičius: <span id="movesCount">0</span></p>
+                      <p>Sutapusių poros: <span id="matchedPairs">0</span> / <span id="totalPairs">0</span></p>
+                      <p id="bestScoreDisplay">Geriausias rezultatas: N/A</p>
+                  </div>
+              </div>
+
+              <div class="col-md-9">
+                  <div id="gameBoard" class="card-grid">
+                      </div>
+                  
+                  <div id="winMessage" class="alert alert-success mt-4" style="display: none;">
+                      </div>
+              </div>
+          </div>
+
+      </div>
+    </section>
   </main>
 
   <footer id="footer" class="footer position-relative">
